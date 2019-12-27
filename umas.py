@@ -46,10 +46,8 @@ class UMASClient(object):
         pass
 
     def run_client(self):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        server_address = ('localhost', 10003)
-        sock.connect(server_address)
+        server_address = ('localhost', 10001)
 
         while True:
             func = input('2 - READ_ID, 16 - TAKE_RESERVATION, 17 - RELEASE_RESERVATION, 18 - KEEP_ALIVE\n')
@@ -60,6 +58,7 @@ class UMASClient(object):
             
             print('connecting to {} port {}'.format(*server_address))
 
+            sock = socket.create_connection(server_address)
             message = self.encode(func)
             print('sending {}'.format(message.hex()))
             sock.sendall(message)
@@ -71,6 +70,7 @@ class UMASClient(object):
                 data = sock.recv(16)
                 amount_received += len(data)
                 print('received {}'.format(data.hex()))
+            sock.close()
 
 
 
@@ -121,7 +121,6 @@ class UMASServer(object):
         pdu.append(FUNCTION_CODE)
         pdu.append(self.owner_id)
         pdu.append(OK)
-        pdu.append(self.plc_id)
 
         header = bytearray()
         header += data[:7]
@@ -149,7 +148,7 @@ class UMASServer(object):
     def run_server(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        server_address = ('localhost', 10003)
+        server_address = ('localhost', 10001)
         print('starting up on {} port {}'.format(*server_address))
         sock.bind(server_address)
 
