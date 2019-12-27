@@ -140,9 +140,24 @@ class UMASServer(object):
         header[-3:-1]= length.to_bytes(2, 'big')
         return header + pdu
 
+    def return_error(self, data):
+        pdu = bytearray()
+        pdu.append(FUNCTION_CODE)
+        pdu.append(self.owner_id)
+        pdu.append(ERROR)
+
+        header = bytearray()
+        header += data[:7]
+        length = len(pdu) + 1
+        header[-3:-1]= length.to_bytes(2, 'big')
+        return header + pdu
+
     def respond(self, data):
         func_code = data[9]
-        func = self.functions[func_code]
+        try:
+            func = self.functions[func_code]
+        except KeyError:
+            func = self.return_error
         return func(data)
 
     def run_server(self):
