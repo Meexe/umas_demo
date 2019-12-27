@@ -22,7 +22,8 @@ function umas_proto.dissector(buffer, pinfo, tree)
         elseif buffer(9, 1):uint() == 16 then umas_tree:add(buffer(9, 1), "UMAS code TAKE_RESERVATION: " .. buffer(9, 1))
         elseif buffer(9, 1):uint() == 17 then umas_tree:add(buffer(9, 1), "UMAS code RELEASE_RESERVATION: " .. buffer(9, 1))
         elseif buffer(9, 1):uint() == 18 then umas_tree:add(buffer(9, 1), "UMAS code KEEP_ALIVE: " .. buffer(9, 1))
-        elseif buffer(9, 1):uint() == 254 then umas_tree:add(buffer(9, 1), "UMAS response OK" .. buffer(9, 1))
+        elseif buffer(9, 1):uint() == 254 then umas_tree:add(buffer(9, 1), "UMAS response OK: " .. buffer(9, 1))
+        elseif buffer(9, 1):uint() == 253 then umas_tree:add(buffer(9, 1), "UMAS response Error: " .. buffer(9, 1))
     end
     if buffer:len() > 10 then
         umas_tree:add(buffer(10, buffer:len()-10), "UMAS payload " .. buffer(10, buffer:len()-10))
